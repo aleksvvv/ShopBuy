@@ -28,7 +28,9 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.shopList.observe(this){
             //в адаптер вставляем новый лист
-            adapter.shopList = it
+        //    adapter.shopList(it)
+            //после наследования адаптера от ListAdapter используем submitList
+            adapter.submitList(it)
 //            Log.d("MyLog", it.toString())
 //            if (count == 0){
 //                count++
@@ -84,7 +86,9 @@ fun swipeDelete(rvShopList:RecyclerView){
             return false
         }
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val item = adapter.shopList[viewHolder.absoluteAdapterPosition]
+//  val item = adapter.shopList[viewHolder.absoluteAdapterPosition]
+//            после наследования адаптера от ListAdapter используем currentList для получения текущего списка
+            val item = adapter.currentList[viewHolder.absoluteAdapterPosition]
             viewModel.deleteShopItem(item)
         }
     }
