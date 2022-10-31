@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
             //в адаптер вставляем новый лист
         //    adapter.shopList(it)
             //после наследования адаптера от ListAdapter используем submitList
+            //запускает новый поток
             adapter.submitList(it)
 //            Log.d("MyLog", it.toString())
 //            if (count == 0){

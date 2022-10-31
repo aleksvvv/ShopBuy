@@ -1,7 +1,7 @@
 package com.example.shopbuy.domain
 
 data class ShopItem(
-    val name: String,
+    var name: String,
     val count: Int,
     var enable: Boolean,
     var id: Int = UNDEFENDED_ID
