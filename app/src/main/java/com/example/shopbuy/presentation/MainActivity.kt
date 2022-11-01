@@ -1,6 +1,7 @@
 package com.example.shopbuy.presentation
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopbuy.R
 import com.example.shopbuy.domain.ShopItem
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,10 +24,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val buttonAdd = findViewById<FloatingActionButton>(R.id.fabPlus)
+        buttonAdd.setOnClickListener {
+            val intent = ShopItemActivity().putModeAdd(this)
+            startActivity(intent)
+        }
 //получаем ссылку на LinearLayout
      //   llShopList = findViewById( R.id.ll_shop_list)
         setupRecyclerView()
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+       // viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this){
             //в адаптер вставляем новый лист
         //    adapter.shopList(it)
@@ -67,12 +76,20 @@ class MainActivity : AppCompatActivity() {
         adapter.onShopItemLongClickListener =  {
             viewModel.changeEnabled(it)
         }
-        adapter.onShopItemClickListener = {
-            Log.d("MyLog", "it: $it")
-        }
+        setupClickListener()
         swipeDelete(rvShopList)
     }
-fun swipeDelete(rvShopList:RecyclerView){
+
+    private fun setupClickListener() {
+        adapter.onShopItemClickListener = {
+
+            val intent = ShopItemActivity().putModeEdit(this,it.id)
+
+            startActivity(intent)
+        }
+    }
+
+    fun swipeDelete(rvShopList:RecyclerView){
     //метод для удаления по свайпу. Создаем callback через анонимный класс
     //переопределяем метод  onSwiped, в методе onMove делаем return false
     //создаем объект анонимного класса
@@ -98,8 +115,6 @@ fun swipeDelete(rvShopList:RecyclerView){
     //прикрепляем его к рецайклервью
     itemTouchHelper.attachToRecyclerView(rvShopList)
 }
-
-
 
 // private fun showList(list: List<ShopItem>){
 //     //очистим список перед обновлением

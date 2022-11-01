@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 object ShopListRepositoryImpl : ShopListRepository {
     private val shopListLD = MutableLiveData<List<ShopItem>>()
-   // private val shopList = mutableListOf<ShopItem>()
+    // private val shopList = mutableListOf<ShopItem>()
 
 //    private val shopList = sortedSetOf<ShopItem>(object : Comparator<ShopItem>{
 //    override fun compare(p0: ShopItem, p1: ShopItem): Int {
@@ -16,12 +16,12 @@ object ShopListRepositoryImpl : ShopListRepository {
 //
 //            }
 
-   private val shopList = sortedSetOf<ShopItem>({ p0, p1 -> p0.id.compareTo(p1.id) })
+    private val shopList = sortedSetOf<ShopItem>({ p0, p1 -> p0.id.compareTo(p1.id) })
 
     private var autoIncrementId = 0
 
     init {
-        for (i in 0 until 1000){
+        for (i in 0 until 5) {
             val item = ShopItem("name $i", i, Random.nextBoolean())
             addShopItem(item)
         }
@@ -56,10 +56,12 @@ object ShopListRepositoryImpl : ShopListRepository {
         } ?: throw RuntimeException("Элемент $shopItemId не найден")
 
     }
-        override fun getShopItemList(): LiveData<List<ShopItem>> {
+
+    override fun getShopItemList(): LiveData<List<ShopItem>> {
         return shopListLD
     }
-    private fun updateList(){
+
+    private fun updateList() {
         //в лив дату присваивмаем копию списка
         shopListLD.value = shopList.toList()
     }
