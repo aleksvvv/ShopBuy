@@ -20,9 +20,7 @@ import com.google.android.material.textfield.TextInputLayout
 class ShopItemFragment(
     private val screenMode: String = MODE_UNKNOWN,
     private val shopItemId: Int = ShopItem.UNDEFENDED_ID
-) : Fragment(
-
-) {
+) : Fragment() {
     private lateinit var viewModel: ShopItemViewModel
 
     private lateinit var tilName: TextInputLayout
@@ -30,8 +28,21 @@ class ShopItemFragment(
     private lateinit var etName: EditText
     private lateinit var etCount: EditText
     private lateinit var bInpute: Button
-//    private var screenMode = MODE_UNKNOWN
+
+    private lateinit var onEditingFinishedListing: OnEditingFinishedListing
+
+    //    private var screenMode = MODE_UNKNOWN
 //    private var shopItemId = ShopItem.UNDEFENDED_ID
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListing) {
+            onEditingFinishedListing = context
+        } else{
+            throw RuntimeException("Activity must implement OnEditingFinishedListing")
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,8 +85,10 @@ class ShopItemFragment(
             tilName.error = message
         }
         viewModel.closeWindow.observe(viewLifecycleOwner) {
-           Log.d("closeWindow","closeWindow $activity")
-            activity?.onBackPressed()
+//           Log.d("closeWindow","closeWindow $activity")
+                   //через метод в интерфейсе с сообщением
+            onEditingFinishedListing.onEditingFinished()
+           // activity?.onBackPressed()
 //            requireActivity().onBackPressed()
 //            finish()
         }
@@ -191,5 +204,8 @@ class ShopItemFragment(
         intent.putExtra(EXTRA_EDIT_ID, shopItemId)
         return intent
     }
+    }
+    interface OnEditingFinishedListing{
+        fun onEditingFinished()
     }
 }

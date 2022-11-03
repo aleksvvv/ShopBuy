@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -16,7 +17,7 @@ import com.example.shopbuy.R
 import com.example.shopbuy.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListing {
     //    private lateinit var viewModel: ShopItemViewModel
 //
 //    private lateinit var tilName: TextInputLayout
@@ -157,5 +158,10 @@ class ShopItemActivity : AppCompatActivity() {
             intent.putExtra(EXTRA_EDIT_ID, shopItemId)
             return intent
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@ShopItemActivity, "Succses", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }

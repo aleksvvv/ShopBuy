@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +19,7 @@ import com.example.shopbuy.domain.ShopItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListing {
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopListAdapter
 
@@ -37,8 +38,9 @@ class MainActivity : AppCompatActivity() {
             if (isOnePane()) {
                 val intent = ShopItemActivity.putModeAdd(this)
                 startActivity(intent)
-            }else
-            {launchFragment(ShopItemFragment.newInstanceAddItem())}
+            } else {
+                launchFragment(ShopItemFragment.newInstanceAddItem())
+            }
         }
 //получаем ссылку на LinearLayout
         //   llShopList = findViewById( R.id.ll_shop_list)
@@ -79,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.shop_item_container, fragment)
-                //добавляет фрагмент в стэк
+            //добавляет фрагмент в стэк
             .addToBackStack(null)
             .commit()
     }
@@ -117,8 +119,9 @@ class MainActivity : AppCompatActivity() {
             if (isOnePane()) {
                 val intent = ShopItemActivity.putModeEdit(this, it.id)
                 startActivity(intent)
-            }else
-            {launchFragment(ShopItemFragment.newInstanceEditItem(it.id))}
+            } else {
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            }
         }
     }
 
@@ -149,6 +152,11 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(callback)
         //прикрепляем его к рецайклервью
         itemTouchHelper.attachToRecyclerView(rvShopList)
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 
 // private fun showList(list: List<ShopItem>){
