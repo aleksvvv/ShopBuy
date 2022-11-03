@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,7 +74,9 @@ class ShopItemFragment(
             tilName.error = message
         }
         viewModel.closeWindow.observe(viewLifecycleOwner) {
+           Log.d("closeWindow","closeWindow $activity")
             activity?.onBackPressed()
+//            requireActivity().onBackPressed()
 //            finish()
         }
     }
@@ -169,7 +172,7 @@ class ShopItemFragment(
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_UNKNOWN = ""
         private const val EXTRA_EDIT_ID = "extra_edit_id"
-    }
+
     fun newInstanceAddItem(): ShopItemFragment{
         return ShopItemFragment(MODE_ADD)
     }fun newInstanceEditItem(shopItemId: Int): ShopItemFragment{
@@ -188,5 +191,5 @@ class ShopItemFragment(
         intent.putExtra(EXTRA_EDIT_ID, shopItemId)
         return intent
     }
-
+    }
 }

@@ -17,7 +17,7 @@ import com.example.shopbuy.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemActivity : AppCompatActivity() {
-//    private lateinit var viewModel: ShopItemViewModel
+    //    private lateinit var viewModel: ShopItemViewModel
 //
 //    private lateinit var tilName: TextInputLayout
 //    private lateinit var tilCount: TextInputLayout
@@ -39,12 +39,13 @@ class ShopItemActivity : AppCompatActivity() {
 //        val mode = intent.getStringExtra(EXTRA_MODE_SCREEN)
 //        val modeId = intent.getStringExtra(EXTRA_EDIT_ID)
 //        Log.d("ShopItemActivity", mode.toString())
-
-        launchRightMode()
+        if (savedInstanceState == null) {
+            launchRightMode()
+        }
 //        observeViewModel()
     }
 
-//    private fun observeViewModel(){
+    //    private fun observeViewModel(){
 //        viewModel.errorInputCount.observe(this) {
 //            val message = if (it) {"Неправильный ввод числа"}
 //            else {null}
@@ -59,15 +60,18 @@ class ShopItemActivity : AppCompatActivity() {
 //            finish()
 //        }
 //    }
-    private fun launchRightMode(){
-       val fragment= when (screenMode) {
-            MODE_ADD ->ShopItemFragment().newInstanceAddItem()
-            MODE_EDIT -> ShopItemFragment().newInstanceEditItem(shopItemId)
-           else -> throw RuntimeException(" Экран отутствует")
+    private fun launchRightMode() {
+        val fragment = when (screenMode) {
+            MODE_ADD -> ShopItemFragment.newInstanceAddItem()
+            MODE_EDIT -> ShopItemFragment.newInstanceEditItem(shopItemId)
+            else -> throw RuntimeException(" Экран отутствует")
         }
-    supportFragmentManager.beginTransaction().add(R.id.shop_item_container, fragment).commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .commit()
     }
-//    private fun addTextChangeListener(){
+
+    //    private fun addTextChangeListener(){
 //        etCount.addTextChangedListener(object : TextWatcher {
 //            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 //            }
@@ -139,18 +143,19 @@ class ShopItemActivity : AppCompatActivity() {
         private const val MODE_EDIT = "mode_edit"
         private const val MODE_UNKNOWN = ""
         private const val EXTRA_EDIT_ID = "extra_edit_id"
-    }
 
-    fun putModeAdd(context: Context): Intent {
-        val intent = Intent(context, ShopItemActivity::class.java)
-        intent.putExtra(EXTRA_MODE_SCREEN, MODE_ADD)
-        return intent
-    }
 
-    fun putModeEdit(context: Context, shopItemId: Int): Intent {
-        val intent = Intent(context, ShopItemActivity::class.java)
-        intent.putExtra(EXTRA_MODE_SCREEN, MODE_EDIT)
-        intent.putExtra(EXTRA_EDIT_ID, shopItemId)
-        return intent
+        fun putModeAdd(context: Context): Intent {
+            val intent = Intent(context, ShopItemActivity::class.java)
+            intent.putExtra(EXTRA_MODE_SCREEN, MODE_ADD)
+            return intent
+        }
+
+        fun putModeEdit(context: Context, shopItemId: Int): Intent {
+            val intent = Intent(context, ShopItemActivity::class.java)
+            intent.putExtra(EXTRA_MODE_SCREEN, MODE_EDIT)
+            intent.putExtra(EXTRA_EDIT_ID, shopItemId)
+            return intent
+        }
     }
 }

@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -19,25 +21,33 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopListAdapter
+
     //private var count = 0
-  //  private lateinit var llShopList:LinearLayout
+    //  private lateinit var llShopList:LinearLayout
+    private var shopItemContainer: FragmentContainerView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        shopItemContainer = findViewById(R.id.shop_item_container)
+
         val buttonAdd = findViewById<FloatingActionButton>(R.id.fabPlus)
         buttonAdd.setOnClickListener {
-            val intent = ShopItemActivity().putModeAdd(this)
-            startActivity(intent)
+            if (isOnePane()) {
+                val intent = ShopItemActivity.putModeAdd(this)
+                startActivity(intent)
+            }else
+            {launchFragment(ShopItemFragment.newInstanceAddItem())}
         }
 //получаем ссылку на LinearLayout
-     //   llShopList = findViewById( R.id.ll_shop_list)
+        //   llShopList = findViewById( R.id.ll_shop_list)
         setupRecyclerView()
-       // viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        // viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        viewModel.shopList.observe(this){
+        viewModel.shopList.observe(this) {
             //в адаптер вставляем новый лист
-        //    adapter.shopList(it)
+            //    adapter.shopList(it)
             //после наследования адаптера от ListAdapter используем submitList
             //запускает новый поток
             adapter.submitList(it)
@@ -49,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 //          Log.d("MyLog", it.toString())
 //            }
 
-          //  showList(it)
+            //  showList(it)
         }
 
 //        viewModel.getShopList()
@@ -59,12 +69,33 @@ class MainActivity : AppCompatActivity() {
 //        }
 //        viewModel.deleteShopItem(ShopItem("tt 0", 0, true))
     }
-    private fun setupRecyclerView(){
+
+    private fun isOnePane(): Boolean {
+        return shopItemContainer == null
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        //очищает стэк от предыдущих фрагментов, если они есть
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+                //добавляет фрагмент в стэк
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun setupRecyclerView() {
         val rvShopList = findViewById<RecyclerView>(R.id.rv_shop_list)
         adapter = ShopListAdapter()
         rvShopList.adapter = adapter
-        rvShopList.recycledViewPool.setMaxRecycledViews(ShopListAdapter.STATUS_ENABLED, ShopListAdapter.MAX_POOL_ENABLED)
-        rvShopList.recycledViewPool.setMaxRecycledViews(ShopListAdapter.STATUS_DISABLED, ShopListAdapter.MAX_POOL_ENABLED)
+        rvShopList.recycledViewPool.setMaxRecycledViews(
+            ShopListAdapter.STATUS_ENABLED,
+            ShopListAdapter.MAX_POOL_ENABLED
+        )
+        rvShopList.recycledViewPool.setMaxRecycledViews(
+            ShopListAdapter.STATUS_DISABLED,
+            ShopListAdapter.MAX_POOL_ENABLED
+        )
 //создаем объект анонимного класса
 //        adapter.onShopItemLongClickListener = object: ShopListAdapter.OnShopItemLongClickListener{
 //            //переопределяем метод
@@ -73,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
         //сразу вызываем метод через лямбду
-        adapter.onShopItemLongClickListener =  {
+        adapter.onShopItemLongClickListener = {
             viewModel.changeEnabled(it)
         }
         setupClickListener()
@@ -83,38 +114,42 @@ class MainActivity : AppCompatActivity() {
     private fun setupClickListener() {
         adapter.onShopItemClickListener = {
 
-            val intent = ShopItemActivity().putModeEdit(this,it.id)
-
-            startActivity(intent)
+            if (isOnePane()) {
+                val intent = ShopItemActivity.putModeEdit(this, it.id)
+                startActivity(intent)
+            }else
+            {launchFragment(ShopItemFragment.newInstanceEditItem(it.id))}
         }
     }
 
-    fun swipeDelete(rvShopList:RecyclerView){
-    //метод для удаления по свайпу. Создаем callback через анонимный класс
-    //переопределяем метод  onSwiped, в методе onMove делаем return false
-    //создаем объект анонимного класса
-    val callback = object : ItemTouchHelper.SimpleCallback(
-        0,
-        ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    fun swipeDelete(rvShopList: RecyclerView) {
+        //метод для удаления по свайпу. Создаем callback через анонимный класс
+        //переопределяем метод  onSwiped, в методе onMove делаем return false
+        //создаем объект анонимного класса
+        val callback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 //  val item = adapter.shopList[viewHolder.absoluteAdapterPosition]
 //            после наследования адаптера от ListAdapter используем currentList для получения текущего списка
-            val item = adapter.currentList[viewHolder.absoluteAdapterPosition]
-            viewModel.deleteShopItem(item)
+                val item = adapter.currentList[viewHolder.absoluteAdapterPosition]
+                viewModel.deleteShopItem(item)
+            }
         }
+        //создаем объект ItemTouchHelper
+        val itemTouchHelper = ItemTouchHelper(callback)
+        //прикрепляем его к рецайклервью
+        itemTouchHelper.attachToRecyclerView(rvShopList)
     }
-    //создаем объект ItemTouchHelper
-    val itemTouchHelper = ItemTouchHelper(callback)
-    //прикрепляем его к рецайклервью
-    itemTouchHelper.attachToRecyclerView(rvShopList)
-}
 
 // private fun showList(list: List<ShopItem>){
 //     //очистим список перед обновлением
