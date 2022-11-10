@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopbuy.R
+import com.example.shopbuy.databinding.ItemShopDisabledBinding
 import com.example.shopbuy.domain.ShopItem
 
-class ShopListAdapter: ListAdapter<ShopItem,ShopListAdapter.ShopItemViewHolder>(ShopItemDiffCallback()) {
+class ShopListAdapter: ListAdapter<ShopItem,ShopItemViewHolder>(ShopItemDiffCallback()) {
 //
 //    var onShopItemLongClickListener:OnShopItemLongClickListener? = null
 //сделали через лямда
@@ -35,10 +36,10 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopListAdapter.ShopItemViewHolder>(
 //       // notifyDataSetChanged()
 //    }
 
-    class ShopItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val tvCount = view.findViewById<TextView>(R.id.tvCount)
-    }
+//    class ShopItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+//        val tvName = view.findViewById<TextView>(R.id.tvName)
+//        val tvCount = view.findViewById<TextView>(R.id.tvCount)
+//    }
 
     override fun getItemViewType(position: Int): Int {
         val status = if (getItem(position).enable){
@@ -57,34 +58,47 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopListAdapter.ShopItemViewHolder>(
        }else{
            R.layout.item_shop_disabled
        }
+
+        val binding = ItemShopDisabledBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         //создаем вью
-        val view = LayoutInflater.from(parent.context)
-                //
-           .inflate( layautId, parent, false)
+//        val view = LayoutInflater.from(parent.context)
+//                //
+//           .inflate( layautId, parent, false)
             // .inflate( R.layout.item_shop_disabled, parent, false)
         //возвращаем обьект, в котором будут выполнены действия описанные в холдере
         //вью холдер содержит view и поля tvName и tvCount
-        return ShopItemViewHolder(view)
+//        return ShopItemViewHolder(view)
+        return ShopItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = getItem(position)
+        val binding = holder.binding
         val status = if (shopItem.enable){"Enebled"
-
         }else{
             "Not enebled"
         }
+binding.tvName.text =shopItem.name
 //        holder.tvName.text = shopItem.name
-        holder.tvName.text = "${shopItem.name }"
-        holder.tvCount.text = shopItem.count.toString()
-         //обрабатываем долгое нажатие
-         holder.view.setOnLongClickListener {
+//        holder.tvName.text = "${shopItem.name }"
+        binding.tvCount.text = shopItem.count.toString()
+//        holder.tvCount.text = shopItem.count.toString()
+
+        //обрабатываем долгое нажатие
+
+//         holder.view.setOnLongClickListener
+        binding.root.setOnLongClickListener        {
         onShopItemLongClickListener?.invoke(shopItem)
 
              true
          }
         //обрабатываем нажатие
-        holder.view.setOnClickListener{
+//        holder.view.setOnClickListener
+        binding.root.setOnClickListener{
             onShopItemClickListener?.invoke(shopItem)
         }
 
