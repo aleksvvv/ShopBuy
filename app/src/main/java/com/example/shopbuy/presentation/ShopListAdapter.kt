@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shopbuy.R
 import com.example.shopbuy.databinding.ItemShopDisabledBinding
+import com.example.shopbuy.databinding.ItemShopEnabledBinding
 import com.example.shopbuy.domain.ShopItem
 
 class ShopListAdapter: ListAdapter<ShopItem,ShopItemViewHolder>(ShopItemDiffCallback()) {
@@ -59,8 +62,10 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopItemViewHolder>(ShopItemDiffCall
            R.layout.item_shop_disabled
        }
 
-        val binding = ItemShopDisabledBinding.inflate(
+        val binding = DataBindingUtil
+            .inflate<ViewDataBinding>(
             LayoutInflater.from(parent.context),
+            layautId,
             parent,
             false
         )
@@ -82,10 +87,20 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopItemViewHolder>(ShopItemDiffCall
         }else{
             "Not enebled"
         }
-binding.tvName.text =shopItem.name
+        when(binding){
+            is ItemShopDisabledBinding ->{
+                binding.tvName.text =shopItem.name
+                binding.tvCount.text = shopItem.count.toString()
+            }
+            is ItemShopEnabledBinding ->{
+                binding.tvName.text =shopItem.name
+                binding.tvCount.text = shopItem.count.toString()
+            }
+        }
+//binding.tvName.text =shopItem.name
 //        holder.tvName.text = shopItem.name
 //        holder.tvName.text = "${shopItem.name }"
-        binding.tvCount.text = shopItem.count.toString()
+//        binding.tvCount.text = shopItem.count.toString()
 //        holder.tvCount.text = shopItem.count.toString()
 
         //обрабатываем долгое нажатие
