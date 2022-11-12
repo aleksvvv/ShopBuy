@@ -89,12 +89,14 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopItemViewHolder>(ShopItemDiffCall
         }
         when(binding){
             is ItemShopDisabledBinding ->{
-                binding.tvName.text =shopItem.name
-                binding.tvCount.text = shopItem.count.toString()
+                binding.shopItem= shopItem
+//                binding.tvName.text =shopItem.name
+//                binding.tvCount.text = shopItem.count.toString()
             }
             is ItemShopEnabledBinding ->{
-                binding.tvName.text =shopItem.name
-                binding.tvCount.text = shopItem.count.toString()
+                binding.shopItem =shopItem
+//                binding.tvName.text =shopItem.name
+//                binding.tvCount.text = shopItem.count.toString()
             }
         }
 //binding.tvName.text =shopItem.name

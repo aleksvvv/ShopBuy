@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    <data>
+        <variable
+            name="shopItem"
+            type="com.example.shopbuy.domain.ShopItem" />
+    </data>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
  android:layout_marginStart="8dp"
@@ -25,7 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Хлеб"
+            tools:text="Хлеб"
+            android:text="@{shopItem.name}"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -33,8 +42,8 @@
             android:id="@+id/tvCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:text="23"
+            android:text="@{String.valueOf(shopItem.count)}"
+            tools:text="23"
             android:textColor="@color/white"
             android:textSize="16sp" />
 

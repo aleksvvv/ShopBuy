@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShopBuy</string>
+    <string name="error_input_count">Неправильный ввод числа</string>
+    <string name="error_input_name">Неправильный ввод имени</string>
 </resources>
