@@ -34,7 +34,7 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 //        }
 //    }
 
-    override fun addShopItem(shopItem: ShopItem) {
+    override suspend fun addShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.shopItemEntryToShopItemDb(shopItem))
 //        //проверка, если добавлятся новый элемент
 //        if (shopItem.id == ShopItem.UNDEFENDED_ID) {
@@ -46,7 +46,7 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 //        updateList()
     }
 
-    override fun deleteShopItem(shopItem: ShopItem) {
+    override suspend fun deleteShopItem(shopItem: ShopItem) {
         shopListDao.delShopItem(shopItem.id)
 
 //        shopList.remove(shopItem)
@@ -54,14 +54,14 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 //        updateList()
     }
 
-    override fun editShopItem(shopItem: ShopItem) {
+    override suspend fun editShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.shopItemEntryToShopItemDb(shopItem))
 //        val oldShopItem = getShopItemDetails(shopItem.id)
 //        deleteShopItem(oldShopItem)
 //        addShopItem(shopItem)
     }
 
-    override fun getShopItemDetails(shopItemId: Int): ShopItem {
+    override suspend fun getShopItemDetails(shopItemId: Int): ShopItem {
         val dbModel = shopListDao.getShopItem(shopItemId)
         return mapper.shopItemDbToShopItemEntry(dbModel)
 //        return shopList.find {
